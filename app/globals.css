@@ -1,0 +1,199 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 84% 4.9%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background: radial-gradient(ellipse at top, #0A0F29 0%, #121212 50%, #000000 100%);
+    min-height: 100vh;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.8);
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+}
+
+/* Custom animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Particle background effect */
+.particle-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(34, 211, 238, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(168, 85, 247, 0.2), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(74, 222, 128, 0.3), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(34, 211, 238, 0.2), transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: particle-float 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-200px, -200px);
+  }
+}
+
+/* Text glow effect */
+.text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Button glow effects */
+.btn-glow-cyan {
+  box-shadow: 
+    0 0 20px rgba(34, 211, 238, 0.4),
+    inset 0 0 20px rgba(34, 211, 238, 0.1);
+}
+
+.btn-glow-green {
+  box-shadow: 
+    0 0 20px rgba(74, 222, 128, 0.4),
+    inset 0 0 20px rgba(74, 222, 128, 0.1);
+}
+
+.btn-glow-red {
+  box-shadow: 
+    0 0 20px rgba(239, 68, 68, 0.4),
+    inset 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+/* Chart container styling */
+.recharts-responsive-container .recharts-cartesian-grid line {
+  stroke: rgba(71, 85, 105, 0.3);
+}
+
+.recharts-responsive-container .recharts-legend-wrapper .recharts-legend-item-text {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Three.js canvas styling */
+canvas {
+  border-radius: 0.5rem;
+  background: transparent !important;
+}
+
+/* Loading animations */
+@keyframes brain-wave {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.5);
+  }
+}
+
+.animate-brain-wave {
+  animation: brain-wave 1.5s ease-in-out infinite;
+}
+
+/* Status indicators */
+.status-online {
+  @apply bg-green-400;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+}
+
+.status-offline {
+  @apply bg-red-400;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.status-recording {
+  @apply bg-cyan-400;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}

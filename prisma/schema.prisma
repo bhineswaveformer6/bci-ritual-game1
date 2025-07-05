@@ -1,0 +1,142 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// BCI Brain Wave Sessions
+model Session {
+    id                String   @id @default(cuid())
+    startTime         DateTime @default(now())
+    endTime           DateTime?
+    duration          Int?     // duration in seconds
+    peakEnergeticScore Float   @default(0)
+    averageEnergeticScore Float @default(0)
+    targetState       TargetState @default(NEUTRAL)
+    status           SessionStatus @default(ACTIVE)
+    modelUsed        String?  // reference to the 3D model used
+    notes            String?
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
+    
+    // Relations
+    brainMetrics     BrainMetric[]
+    
+    @@map("sessions")
+}
+
+// Real-time EEG Brain Metrics Data
+model BrainMetric {
+    id                    String   @id @default(cuid())
+    sessionId            String
+    timestamp            DateTime @default(now())
+    
+    // EEG Frequency Bands (in microvolts)
+    deltaWave            Float    @default(0) // 0.5-4 Hz
+    thetaWave            Float    @default(0) // 4-8 Hz  
+    alphaWave            Float    @default(0) // 8-13 Hz
+    betaWave             Float    @default(0) // 13-30 Hz
+    gammaWave            Float    @default(0) // 30-100 Hz
+    
+    // Key Ratios
+    alphaTheta           Float    @default(0) // Alpha/Theta ratio for relaxation
+    betaGammaAlpha       Float    @default(0) // (Beta+Gamma)/Alpha for focus
+    coherence            Float    @default(0) // Brain region synchrony (0-1)
+    
+    // Derived Scores (0-100)
+    energeticSignature   Float    @default(0) // Combined metric
+    focusScore           Float    @default(0)
+    calmScore            Float    @default(0)
+    meditationDepth      Float    @default(0)
+    
+    // Relations
+    session              Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    
+    @@map("brain_metrics")
+}
+
+// 3D Models Storage
+model Model3D {
+    id                   String   @id @default(cuid())
+    filename             String   @unique
+    originalName         String
+    fileSize             Int      // in bytes
+    fileType             ModelFileType
+    uploadDate           DateTime @default(now())
+    isPreset             Boolean  @default(false)
+    thumbnailUrl         String?
+    description          String?
+    
+    // Model metadata
+    vertexCount          Int?
+    triangleCount        Int?
+    hasAnimations        Boolean  @default(false)
+    hasMaterials         Boolean  @default(false)
+    boundingBoxSize      Float?
+    
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+    
+    @@map("models_3d")
+}
+
+// User Settings and Preferences
+model UserSettings {
+    id                   String   @id @default(cuid())
+    
+    // Data Source Configuration
+    dataSource           DataSource @default(SIMULATOR)
+    simulatorState       TargetState @default(NEUTRAL)
+    
+    // UI Preferences
+    preferredModelId     String?
+    dashboardLayout      String   @default("default")
+    chartUpdateRate      Int      @default(100) // milliseconds
+    
+    // 3D Viewer Settings
+    cameraPosition       String   @default("0,0,5") // x,y,z coordinates
+    autoRotate           Boolean  @default(true)
+    ambientLightIntensity Float   @default(0.4)
+    
+    // BCI Simulation Parameters
+    waveAmplitudeScale   Float    @default(1.0)
+    noiseLevel           Float    @default(0.1)
+    transitionSpeed      Float    @default(1.0)
+    
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+    
+    @@map("user_settings")
+}
+
+// Enums
+enum SessionStatus {
+    ACTIVE
+    COMPLETED
+    INTERRUPTED
+    ERROR
+}
+
+enum TargetState {
+    DEEP_MEDITATION  // High Theta, moderate Alpha
+    RELAXATION      // High Alpha, low Beta
+    FOCUS           // High Beta, moderate Gamma
+    FLOW_STATE      // Balanced Beta-Gamma with coherence
+    NEUTRAL
+}
+
+enum DataSource {
+    LIVE_BCI
+    SIMULATOR
+}
+
+enum ModelFileType {
+    GLTF
+    GLB
+    OBJ
+    FBX
+}
